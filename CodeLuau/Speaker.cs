@@ -4,9 +4,6 @@ using System.Linq;
 
 namespace CodeLuau
 {
-	/// <summary>
-	/// Represents a single speaker
-	/// </summary>
 	public class Speaker
 	{
 		public string FirstName { get; set; }
@@ -64,15 +61,6 @@ namespace CodeLuau
 				{
 					foreach (var session in Sessions)
 					{
-						//foreach (var tech in nt)
-						//{
-						//    if (session.Title.Contains(tech))
-						//    {
-						//        session.Approved = true;
-						//        break;
-						//    }
-						//}
-
 						foreach (var tech in ot)
 						{
 							if (session.Title.Contains(tech) || session.Description.Contains(tech))
@@ -121,7 +109,6 @@ namespace CodeLuau
 					}
 
 
-					//Now, save the speaker and sessions to the db.
 					try
 					{
 						speakerId = repository.SaveSpeaker(this);
@@ -142,7 +129,6 @@ namespace CodeLuau
 			}
 
  
-            //if we got this far, the speaker is registered.
             return new RegisterResponse((int)speakerId);
 		}
 	}
