@@ -24,7 +24,21 @@ namespace CodeLuau
 		public int RegistrationFee { get; set; }
 		public List<Session> Sessions { get; set; }
 
-		public RegisterResponse Register(IRepository repository)
+		public RegisterResponse TryRegister(IRepository repository)
+		{
+            try
+            {
+				return Register(repository);
+            }
+            catch (Exception ex)
+            {
+				Console.WriteLine(ex);
+				throw;
+            }
+        }
+
+        private RegisterResponse Register(IRepository repository)
+
 		{
 			int? speakerId = null;
 			bool good = false;
@@ -128,8 +142,8 @@ namespace CodeLuau
 				return new RegisterResponse(RegisterError.SpeakerDoesNotMeetStandards);
 			}
 
- 
-            return new RegisterResponse((int)speakerId);
+
+			return new RegisterResponse((int)speakerId);
 		}
 	}
 }

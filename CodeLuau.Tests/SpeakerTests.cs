@@ -17,7 +17,7 @@ namespace CodeLuau.Tests
 			speaker.FirstName = "";
 
 			//act
-			var result = speaker.Register(repository);
+			var result = speaker.TryRegister(repository);
 
 			//assert
 			Assert.AreEqual(RegisterError.FirstNameRequired, result.Error);
@@ -31,7 +31,7 @@ namespace CodeLuau.Tests
 			speaker.LastName = "";
 
 			//act
-			var result = speaker.Register(repository);
+			var result = speaker.TryRegister(repository);
 
 			//assert
 			Assert.AreEqual(RegisterError.LastNameRequired, result.Error);
@@ -45,7 +45,7 @@ namespace CodeLuau.Tests
 			speaker.Email = "";
 
 			//act
-			var result = speaker.Register(repository);
+			var result = speaker.TryRegister(repository);
 
 			//assert
 			Assert.AreEqual(RegisterError.EmailRequired, result.Error);
@@ -59,7 +59,7 @@ namespace CodeLuau.Tests
 			speaker.Employer = "Microsoft";
 
 			//act
-			var result = speaker.Register(new FakeRepository());
+			var result = speaker.TryRegister(new FakeRepository());
 
 			//assert
 			Assert.IsNotNull(result.SpeakerId);
@@ -72,7 +72,7 @@ namespace CodeLuau.Tests
 			var speaker = GetSpeakerWithRedFlags();
 
 			//act
-			var result = speaker.Register(new FakeRepository());
+			var result = speaker.TryRegister(new FakeRepository());
 
 			//assert
 			Assert.IsNotNull(result.SpeakerId);
@@ -92,7 +92,7 @@ namespace CodeLuau.Tests
 		};
 
 			//act
-			var result = speaker.Register(new FakeRepository());
+			var result = speaker.TryRegister(new FakeRepository());
 
 			//assert
 			Assert.IsNotNull(result.SpeakerId);
@@ -108,7 +108,7 @@ namespace CodeLuau.Tests
 		};
 
 			//act
-			var result = speaker.Register(repository);
+			var result = speaker.TryRegister(repository);
 
 			//assert
 			Assert.AreEqual(RegisterError.NoSessionsApproved, result.Error);
@@ -122,7 +122,7 @@ namespace CodeLuau.Tests
 			speaker.Sessions = new List<Session>();
 
 			//act
-			var result = speaker.Register(repository);
+			var result = speaker.TryRegister(repository);
 
 			//assert
 			Assert.AreEqual(RegisterError.NoSessionsProvided, result.Error);
@@ -137,7 +137,7 @@ namespace CodeLuau.Tests
 			speakerThatDoesntAppearExceptional.Browser = new WebBrowser("IE", 6);
 
 			//act
-			var result = speakerThatDoesntAppearExceptional.Register(repository);
+			var result = speakerThatDoesntAppearExceptional.TryRegister(repository);
 
 			//assert
 			Assert.AreEqual(RegisterError.SpeakerDoesNotMeetStandards, result.Error);
@@ -152,7 +152,7 @@ namespace CodeLuau.Tests
 			speakerThatDoesntAppearExceptional.Email = "name@aol.com";
 
 			//act
-			var result = speakerThatDoesntAppearExceptional.Register(repository);
+			var result = speakerThatDoesntAppearExceptional.TryRegister(repository);
 
 			//assert
 			Assert.AreEqual(RegisterError.SpeakerDoesNotMeetStandards, result.Error);
