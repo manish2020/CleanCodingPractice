@@ -13,10 +13,10 @@ namespace CodeLuau
 		private bool IsFirstNameEmpty => string.IsNullOrWhiteSpace(FirstName);
 
 		public string LastName { get; set; }
-		private bool IsLastNameEmpty => !string.IsNullOrWhiteSpace(LastName);
+		private bool IsLastNameEmpty => string.IsNullOrWhiteSpace(LastName);
 
 		public string Email { get; set; }
-		private bool IsEmailEmpty => !string.IsNullOrWhiteSpace(Email);
+		private bool IsEmailEmpty => string.IsNullOrWhiteSpace(Email);
 
 		public int? Exp { get; set; }
 		public bool HasBlog { get; set; }
@@ -27,21 +27,13 @@ namespace CodeLuau
 		public int RegistrationFee { get; set; }
 		public List<Session> Sessions { get; set; }
 
-		/// <summary>
-		/// Register a speaker
-		/// </summary>
-		/// <returns>speakerID</returns>
 		public RegisterResponse Register(IRepository repository)
 		{
-			// lets init some vars
 			int? speakerId = null;
 			bool good = false;
 			bool appr = false;
-			//var nt = new List<string> {"Node.js", "Docker"};
 			var ot = new List<string>() { "Cobol", "Punch Cards", "Commodore", "VBScript" };
 
-			//DEFECT #5274 DA 12/10/2012
-			//We weren't filtering out the prodigy domain so I added it.
 			var domains = new List<string>() { "aol.com", "prodigy.com", "compuserve.com" };
 
 			if (IsFirstNameEmpty)
@@ -52,14 +44,12 @@ namespace CodeLuau
 				return new RegisterResponse(RegisterError.EmailRequired);
 
 
-			//put list of employers in array
 			var emps = new List<string>() { "Pluralsight", "Microsoft", "Google" };
 
 			good = Exp > 10 || HasBlog || Certifications.Count() > 3 || emps.Contains(Employer);
 
 			if (!good)
 			{
-				//need to get just the domain from the email
 				string emailDomain = Email.Split('@').Last();
 
 				if (!domains.Contains(emailDomain) && (!(Browser.Name == WebBrowser.BrowserName.InternetExplorer && Browser.MajorVersion < 9)))
