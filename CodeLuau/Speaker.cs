@@ -20,7 +20,13 @@ namespace CodeLuau
 		public string BlogURL { get; set; }
 		public WebBrowser Browser { get; set; }
 		public List<string> Certifications { get; set; }
-		public string Employer { get; set; }
+		
+        private static readonly List<string> QualifiedEmployers
+		    = new List<string>() { "Pluralsight", "Microsoft", "Google" };
+
+        public string Employer { get; set; }
+        private bool HasQualifiedEmployer => QualifiedEmployers.Contains(Employer);
+
 		public int RegistrationFee { get; set; }
 		public List<Session> Sessions { get; set; }
 
@@ -47,8 +53,10 @@ namespace CodeLuau
 				return new RegisterResponse(RegisterError.EmailRequired);
 
 
-			var emps = new List<string>() { "Pluralsight", "Microsoft", "Google" };
-            bool good = Exp > 10 || HasBlog || Certifications.Count() > 3 || emps.Contains(Employer);
+            var good = Exp > 10 
+                       || HasBlog 
+                       || Certifications.Count() > 3 
+                       || HasQualifiedEmployer;
 
             var ot = new List<string>() { "Cobol", "Punch Cards", "Commodore", "VBScript" };
 			if (!good)
