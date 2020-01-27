@@ -39,13 +39,7 @@ namespace CodeLuau
 
         private RegisterResponse Register(IRepository repository)
         {
-			int? speakerId = null;
-			bool appr = false;
-			var ot = new List<string>() { "Cobol", "Punch Cards", "Commodore", "VBScript" };
-
-			var domains = new List<string>() { "aol.com", "prodigy.com", "compuserve.com" };
-
-			if (IsFirstNameEmpty)
+            if (IsFirstNameEmpty)
 				return new RegisterResponse(RegisterError.FirstNameRequired);
 			if (IsLastNameEmpty)
 				return new RegisterResponse(RegisterError.LastNameRequired);
@@ -56,18 +50,22 @@ namespace CodeLuau
 			var emps = new List<string>() { "Pluralsight", "Microsoft", "Google" };
             bool good = Exp > 10 || HasBlog || Certifications.Count() > 3 || emps.Contains(Employer);
 
+            var ot = new List<string>() { "Cobol", "Punch Cards", "Commodore", "VBScript" };
 			if (!good)
 			{
 				string emailDomain = Email.Split('@').Last();
 
+                var domains = new List<string>() { "aol.com", "prodigy.com", "compuserve.com" };
 				if (!domains.Contains(emailDomain) && (!(Browser.Name == WebBrowser.BrowserName.InternetExplorer && Browser.MajorVersion < 9)))
 				{
 					good = true;
 				}
 			}
 
+            int? speakerId = null;
 			if (good)
 			{
+                bool appr = false;
 				if (Sessions.Count() != 0)
 				{
 					foreach (var session in Sessions)
