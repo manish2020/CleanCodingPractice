@@ -7,7 +7,7 @@ namespace CodeLuau.Tests
 	[TestClass]
 	public class SpeakerTests
 	{
-		private FakeRepository repository = new FakeRepository();
+		private readonly FakeRepository repository = new FakeRepository();
 
 		[TestMethod]
 		public void Register_EmptyFirstName_ReturnsFirstNameRequired()
