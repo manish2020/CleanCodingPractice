@@ -10,7 +10,7 @@ namespace CodeLuau
 		private bool IsFirstNameEmpty => string.IsNullOrWhiteSpace(FirstName);
 
 		public string LastName { get; set; }
-		private bool IsLastNameEmpty => string.IsNullOrWhiteSpace(LastName);
+		private bool IsLastNameEmpty => string.IsNullOrWhiteSpace(LastName);             
 
 		public string Email { get; set; }
 		private bool IsEmailEmpty => string.IsNullOrWhiteSpace(Email);
@@ -38,8 +38,7 @@ namespace CodeLuau
         }
 
         private RegisterResponse Register(IRepository repository)
-
-		{
+        {
 			int? speakerId = null;
 			bool good = false;
 			bool appr = false;
@@ -145,5 +144,7 @@ namespace CodeLuau
 
 			return new RegisterResponse((int)speakerId);
 		}
+
+
 	}
 }
