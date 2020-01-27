@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace CodeLuau
 {
-	public class Speaker : IIdealSpeakerCriteria
+	public class Speaker : IIdealSpeakerAspects
 	{
 		public string FirstName { get; set; }
 		private bool IsFirstNameEmpty => string.IsNullOrWhiteSpace(FirstName);
@@ -47,7 +47,7 @@ namespace CodeLuau
 			if (IsEmailEmpty)
 				return new RegisterResponse(RegisterError.EmailRequired);
 
-            var isIdeal = SpeakerEvaluator.IsIdeal(this);
+            var isIdeal = IdealSpeakerCriteria.IsIdeal(this);
 
 			if (!isIdeal)
 			{

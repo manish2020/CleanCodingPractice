@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace CodeLuau
 {
-    internal interface IIdealSpeakerCriteria
+    internal interface IIdealSpeakerAspects
     {
         int? ExperienceYearCount { get; }
         bool HasBlog { get; }
