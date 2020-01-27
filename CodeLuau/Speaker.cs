@@ -51,74 +51,59 @@ namespace CodeLuau
 			if (email.IsEmpty)
 				return new RegisterResponse(RegisterError.EmailRequired);
 
-            var isIdeal = IdealSpeakerCriteria.IsIdeal(this);
+            var isIdeal = IdealSpeakerCriteria.IsIdeal(this)
+                || (email.HasAcceptableDomain() && Browser.IsAcceptable);
 
-			if (!isIdeal)
-			{
-                if (email.IsAcceptable() && (!(Browser.Name == WebBrowser.BrowserName.InternetExplorer && Browser.MajorVersion < 9)))
-				{
-					isIdeal = true;
-				}
-			}
+            if (!isIdeal)
+                return new RegisterResponse(RegisterError.SpeakerDoesNotMeetStandards);
+            if (!Sessions.Any())
+                return new RegisterResponse(RegisterError.NoSessionsProvided);
+
+            bool appr = false;
+            foreach (var session in Sessions)
+            {
+                var ot = new List<string>() {"Cobol", "Punch Cards", "Commodore", "VBScript"};
+                foreach (var tech in ot)
+                {
+                    if (session.Title.Contains(tech) || session.Description.Contains(tech))
+                    {
+                        session.Approved = false;
+                        break;
+                    }
+                    else
+                    {
+                        session.Approved = true;
+                        appr = true;
+                    }
+                }
+            }
 
             int? speakerId = null;
-			if (isIdeal)
-			{
-                bool appr = false;
-				if (Sessions.Count() != 0)
-				{
-					foreach (var session in Sessions)
-					{
-                        var ot = new List<string>() { "Cobol", "Punch Cards", "Commodore", "VBScript" };
-						foreach (var tech in ot)
-						{
-							if (session.Title.Contains(tech) || session.Description.Contains(tech))
-							{
-								session.Approved = false;
-								break;
-							}
-							else
-							{
-								session.Approved = true;
-								appr = true;
-							}
-						}
-					}
-				}
-				else
-				{
-					return new RegisterResponse(RegisterError.NoSessionsProvided);
-				}
-
-				if (appr)
-                {
-                    var valuedExp = ExperienceYearCount ?? 0;
-                    RegistrationFee 
-                        = RegistrationFeeDefaults.VariableFeeList
+            if (appr)
+            {
+                var valuedExp = ExperienceYearCount ?? 0;
+                RegistrationFee
+                    = RegistrationFeeDefaults.VariableFeeList
                         .First(fee => fee.IsQualifiedExperienceYears(valuedExp))
                         .Amount;
 
-                    try
-					{
-						speakerId = repository.SaveSpeaker(this);
-					}
-					catch (Exception e)
-					{
-						//in case the db call fails 
-					}
-				}
-				else
-				{
-					return new RegisterResponse(RegisterError.NoSessionsApproved);
-				}
-			}
-			else
-			{
-				return new RegisterResponse(RegisterError.SpeakerDoesNotMeetStandards);
-			}
+                try
+                {
+                    speakerId = repository.SaveSpeaker(this);
+                }
+                catch (Exception e)
+                {
+                    //in case the db call fails 
+                }
+            }
+            else
+            {
+                return new RegisterResponse(RegisterError.NoSessionsApproved);
+            }
 
 
-			return new RegisterResponse((int)speakerId);
+
+            return new RegisterResponse((int)speakerId);
 		}
 
 

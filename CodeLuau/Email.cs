@@ -12,7 +12,7 @@ namespace CodeLuau
         public string Domain => Address.Split('@').Last();
         public bool IsEmpty => string.IsNullOrWhiteSpace(Address);
 
-        public bool IsAcceptable()
+        public bool HasAcceptableDomain()
         {
             var domain = Domain;
             return !UnacceptableDomains.Contains(domain);

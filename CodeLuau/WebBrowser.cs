@@ -5,6 +5,9 @@
 		public BrowserName Name { get; set; }
 		public int MajorVersion { get; set; }
 
+        public bool IsAcceptable
+            => !(Name == WebBrowser.BrowserName.InternetExplorer && MajorVersion < 9);
+
 		public WebBrowser(string name, int majorVersion)
 		{
 			Name = TranslateStringToBrowserName(name);
@@ -31,5 +34,6 @@
 			Konqueror,
 			Linx
 		}
+
 	}
 }
