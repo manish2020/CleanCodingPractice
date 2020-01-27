@@ -15,18 +15,13 @@ namespace CodeLuau
 		public string Email { get; set; }
 		private bool IsEmailEmpty => string.IsNullOrWhiteSpace(Email);
 
-		public int? Exp { get; set; }
-		public bool HasBlog { get; set; }
-		public string BlogURL { get; set; }
-		public WebBrowser Browser { get; set; }
-		public List<string> Certifications { get; set; }
-		
-        private static readonly List<string> QualifiedEmployers
-		    = new List<string>() { "Pluralsight", "Microsoft", "Google" };
-
+		public int? ExperienceYearCount { get; set; }
+        public bool HasBlog { get; set; }
+        public List<string> Certifications { get; set; }
+        public string BlogURL { get; set; }
         public string Employer { get; set; }
-        private bool HasQualifiedEmployer => QualifiedEmployers.Contains(Employer);
 
+        public WebBrowser Browser { get; set; }
 		public int RegistrationFee { get; set; }
 		public List<Session> Sessions { get; set; }
 
@@ -52,32 +47,28 @@ namespace CodeLuau
 			if (IsEmailEmpty)
 				return new RegisterResponse(RegisterError.EmailRequired);
 
+            var isIdeal = SpeakerEvaluator.IsIdeal(this);
 
-            var good = Exp > 10 
-                       || HasBlog 
-                       || Certifications.Count() > 3 
-                       || HasQualifiedEmployer;
-
-            var ot = new List<string>() { "Cobol", "Punch Cards", "Commodore", "VBScript" };
-			if (!good)
+			if (!isIdeal)
 			{
 				string emailDomain = Email.Split('@').Last();
 
                 var domains = new List<string>() { "aol.com", "prodigy.com", "compuserve.com" };
 				if (!domains.Contains(emailDomain) && (!(Browser.Name == WebBrowser.BrowserName.InternetExplorer && Browser.MajorVersion < 9)))
 				{
-					good = true;
+					isIdeal = true;
 				}
 			}
 
             int? speakerId = null;
-			if (good)
+			if (isIdeal)
 			{
                 bool appr = false;
 				if (Sessions.Count() != 0)
 				{
 					foreach (var session in Sessions)
 					{
+                        var ot = new List<string>() { "Cobol", "Punch Cards", "Commodore", "VBScript" };
 						foreach (var tech in ot)
 						{
 							if (session.Title.Contains(tech) || session.Description.Contains(tech))
@@ -100,7 +91,7 @@ namespace CodeLuau
 
 				if (appr)
                 {
-                    var valuedExp = Exp ?? 0;
+                    var valuedExp = ExperienceYearCount ?? 0;
                     RegistrationFee 
                         = RegistrationFeeDefaults.VariableFeeList
                         .First(fee => fee.IsQualifiedExperienceYears(valuedExp))
