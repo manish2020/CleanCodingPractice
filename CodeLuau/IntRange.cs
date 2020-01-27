@@ -18,7 +18,7 @@ namespace CodeLuau
         private IntRange(int minimum, int maximum)
             => (Minimum, Maximum) = (minimum, maximum);
 
-        public static IntRange MinToMaxRange(int minimum, int maximum)
+        public static IntRange MinToMax(int minimum, int maximum)
             => new IntRange(minimum, maximum);
 
         #endregion

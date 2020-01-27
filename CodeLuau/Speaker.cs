@@ -95,34 +95,14 @@ namespace CodeLuau
 				}
 
 				if (appr)
-				{
-					//if we got this far, the speaker is approved
-					//let's go ahead and register him/her now.
-					//First, let's calculate the registration fee. 
-					//More experienced speakers pay a lower fee.
-					if (Exp <= 1)
-					{
-						RegistrationFee = 500;
-					}
-					else if (Exp >= 2 && Exp <= 3)
-					{
-						RegistrationFee = 250;
-					}
-					else if (Exp >= 4 && Exp <= 5)
-					{
-						RegistrationFee = 100;
-					}
-					else if (Exp >= 6 && Exp <= 9)
-					{
-						RegistrationFee = 50;
-					}
-					else
-					{
-						RegistrationFee = 0;
-					}
+                {
+                    var valuedExp = Exp ?? 0;
+                    RegistrationFee 
+                        = RegistrationFeeDefaults.VariableFeeList
+                        .First(fee => fee.IsQualifiedExperienceYears(valuedExp))
+                        .Amount;
 
-
-					try
+                    try
 					{
 						speakerId = repository.SaveSpeaker(this);
 					}
