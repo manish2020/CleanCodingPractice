@@ -103,8 +103,8 @@ namespace CodeLuau.Tests
 		{
 			//arrange
 			var speaker = GetSpeakerThatWouldBeApproved();
-			speaker.Sessions = new List<Session>() {
-			new Session("Cobol for dummies", "Intro to Cobol")
+			speaker.ProposedConferenceSessions = new List<ConferenceSession>() {
+			new ConferenceSession("Cobol for dummies", "Intro to Cobol")
 		};
 
 			//act
@@ -119,7 +119,7 @@ namespace CodeLuau.Tests
 		{
 			//arrange
 			var speaker = GetSpeakerThatWouldBeApproved();
-			speaker.Sessions = new List<Session>();
+			speaker.ProposedConferenceSessions = new List<ConferenceSession>();
 
 			//act
 			var result = speaker.TryRegister(repository);
@@ -172,8 +172,8 @@ namespace CodeLuau.Tests
 				ExperienceYearCount = 1,
 				Certifications = new System.Collections.Generic.List<string>(),
 				BlogURL = "",
-				Sessions = new System.Collections.Generic.List<Session>() {
-				new Session("test title", "test description")
+				ProposedConferenceSessions = new System.Collections.Generic.List<ConferenceSession>() {
+				new ConferenceSession("test title", "test description")
 			}
 			};
 		}
