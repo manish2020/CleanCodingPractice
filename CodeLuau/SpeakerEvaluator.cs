@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace CodeLuau
 {
@@ -11,10 +9,10 @@ namespace CodeLuau
         private static readonly List<string> IdealEmployers
             = new List<string>() { "Pluralsight", "Microsoft", "Google" };
 
-        public static bool IsIdeal(Speaker speaker)
-            => speaker.ExperienceYearCount >= IdealExperienceYearCount
-               || speaker.HasBlog
-               || speaker.Certifications.Count >= IdealCertificationCount
-               || IdealEmployers.Contains(speaker.Employer);
+        public static bool IsIdeal(IIdealSpeakerCriteria criteria)
+            => criteria.ExperienceYearCount >= IdealExperienceYearCount
+               || criteria.HasBlog
+               || criteria.Certifications.Count >= IdealCertificationCount
+               || IdealEmployers.Contains(criteria.Employer);
     }
 }

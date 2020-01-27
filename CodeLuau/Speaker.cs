@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace CodeLuau
 {
-	public class Speaker
+	public class Speaker : IIdealSpeakerCriteria
 	{
 		public string FirstName { get; set; }
 		private bool IsFirstNameEmpty => string.IsNullOrWhiteSpace(FirstName);
