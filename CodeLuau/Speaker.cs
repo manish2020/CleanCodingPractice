@@ -44,19 +44,9 @@ namespace CodeLuau
 
         private RegisterResponse Register(IRepository repository)
         {
-            if (IsFirstNameEmpty)
-				return new RegisterResponse(RegisterError.FirstNameRequired);
-			if (IsLastNameEmpty)
-				return new RegisterResponse(RegisterError.LastNameRequired);
-			if (email.IsEmpty)
-				return new RegisterResponse(RegisterError.EmailRequired);
-            if (!MeetsStandards())
-                return new RegisterResponse(RegisterError.SpeakerDoesNotMeetStandards);
-            if (!ProposedConferenceSessions.Any())
-                return new RegisterResponse(RegisterError.NoSessionsProvided);
-            if (!HasApprovedConferenceSession())
-                return new RegisterResponse(RegisterError.NoSessionsApproved);
-
+            var registerError = GetRegisterError();
+            if (registerError != null) 
+                return new RegisterResponse(registerError);
 
             int? speakerId = null;
             var valuedExp = ExperienceYearCount ?? 0;
@@ -76,6 +66,29 @@ namespace CodeLuau
 
             return new RegisterResponse((int)speakerId);
 		}
+
+        private RegisterError? GetRegisterError()
+        {
+            if (IsFirstNameEmpty)
+                return RegisterError.FirstNameRequired;
+
+            if (IsLastNameEmpty)
+                return RegisterError.LastNameRequired;
+            
+            if (email.IsEmpty)
+                return RegisterError.EmailRequired;
+            
+            if (!MeetsStandards())
+                return RegisterError.SpeakerDoesNotMeetStandards;
+            
+            if (!ProposedConferenceSessions.Any())
+                return RegisterError.NoSessionsProvided;
+            
+            if (!HasApprovedConferenceSession())
+                return RegisterError.NoSessionsApproved;
+
+            return null;
+        }
 
         private bool MeetsStandards()
             => IdealSpeakerCriteria.IsIdeal(this)
