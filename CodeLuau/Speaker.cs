@@ -40,7 +40,6 @@ namespace CodeLuau
         private RegisterResponse Register(IRepository repository)
         {
 			int? speakerId = null;
-			bool good = false;
 			bool appr = false;
 			var ot = new List<string>() { "Cobol", "Punch Cards", "Commodore", "VBScript" };
 
@@ -55,8 +54,7 @@ namespace CodeLuau
 
 
 			var emps = new List<string>() { "Pluralsight", "Microsoft", "Google" };
-
-			good = Exp > 10 || HasBlog || Certifications.Count() > 3 || emps.Contains(Employer);
+            bool good = Exp > 10 || HasBlog || Certifications.Count() > 3 || emps.Contains(Employer);
 
 			if (!good)
 			{
