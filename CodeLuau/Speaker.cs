@@ -12,10 +12,14 @@ namespace CodeLuau
 		public string LastName { get; set; }
 		private bool IsLastNameEmpty => string.IsNullOrWhiteSpace(LastName);             
 
-		public string Email { get; set; }
-		private bool IsEmailEmpty => string.IsNullOrWhiteSpace(Email);
+		private readonly Email email = new Email();
+        public string EmailAddress
+        {
+            get => email.Address;
+            set => email.Address = value;
+        }
 
-		public int? ExperienceYearCount { get; set; }
+        public int? ExperienceYearCount { get; set; }
         public bool HasBlog { get; set; }
         public List<string> Certifications { get; set; }
         public string BlogURL { get; set; }
@@ -44,17 +48,14 @@ namespace CodeLuau
 				return new RegisterResponse(RegisterError.FirstNameRequired);
 			if (IsLastNameEmpty)
 				return new RegisterResponse(RegisterError.LastNameRequired);
-			if (IsEmailEmpty)
+			if (email.IsEmpty)
 				return new RegisterResponse(RegisterError.EmailRequired);
 
             var isIdeal = IdealSpeakerCriteria.IsIdeal(this);
 
 			if (!isIdeal)
 			{
-				string emailDomain = Email.Split('@').Last();
-
-                var domains = new List<string>() { "aol.com", "prodigy.com", "compuserve.com" };
-				if (!domains.Contains(emailDomain) && (!(Browser.Name == WebBrowser.BrowserName.InternetExplorer && Browser.MajorVersion < 9)))
+                if (email.IsAcceptable() && (!(Browser.Name == WebBrowser.BrowserName.InternetExplorer && Browser.MajorVersion < 9)))
 				{
 					isIdeal = true;
 				}

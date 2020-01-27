@@ -42,7 +42,7 @@ namespace CodeLuau.Tests
 		{
 			//arrange
 			var speaker = GetSpeakerThatWouldBeApproved();
-			speaker.Email = "";
+			speaker.EmailAddress = "";
 
 			//act
 			var result = speaker.TryRegister(repository);
@@ -149,7 +149,7 @@ namespace CodeLuau.Tests
 			//arrange
 			var speakerThatDoesntAppearExceptional = GetSpeakerThatWouldBeApproved();
 			speakerThatDoesntAppearExceptional.HasBlog = false;
-			speakerThatDoesntAppearExceptional.Email = "name@aol.com";
+			speakerThatDoesntAppearExceptional.EmailAddress = "name@aol.com";
 
 			//act
 			var result = speakerThatDoesntAppearExceptional.TryRegister(repository);
@@ -165,7 +165,7 @@ namespace CodeLuau.Tests
 			{
 				FirstName = "First",
 				LastName = "Last",
-				Email = "example@domain.com",
+				EmailAddress = "example@domain.com",
 				Employer = "Example Employer",
 				HasBlog = true,
 				Browser = new WebBrowser("test", 1),
@@ -181,7 +181,7 @@ namespace CodeLuau.Tests
 		private Speaker GetSpeakerWithRedFlags()
 		{
 			var speaker = GetSpeakerThatWouldBeApproved();
-			speaker.Email = "tom@aol.com";
+			speaker.EmailAddress = "tom@aol.com";
 			speaker.Browser = new WebBrowser("IE", 6);
 			return speaker;
 		}
