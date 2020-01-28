@@ -1,5 +1,5 @@
 # Exercise on Clean Coding Principles in C#
-## From Pluralsight course by Cory House
+_From Pluralsight course by Cory House_
 
 Refactored code from the course's exercise files. Re-wrote the project before watching the refactoring steps presented on the course. 
 
@@ -9,5 +9,5 @@ Also, I would love to hear feedback from the community on how I can improve my w
 
 
 
-Credits on the original code goes to Cory House or Pluralsight.
+Credits on the original code goes to @coryhouse or Pluralsight.
 See: https://www.pluralsight.com/courses/csharp-clean-coding-principles
