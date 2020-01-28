@@ -4,162 +4,89 @@ using System.Linq;
 
 namespace CodeLuau
 {
-	/// <summary>
-	/// Represents a single speaker
-	/// </summary>
 	public class Speaker
 	{
 		public string FirstName { get; set; }
+		private bool IsFirstNameEmpty => string.IsNullOrWhiteSpace(FirstName);
+
 		public string LastName { get; set; }
-		public string Email { get; set; }
-		public int? Exp { get; set; }
-		public bool HasBlog { get; set; }
+		private bool IsLastNameEmpty => string.IsNullOrWhiteSpace(LastName);             
+
+		private readonly Email email = new Email();
+		public string EmailAddress
+		{
+			get => email.Address;
+			set => email.Address = value;
+		}
+
+		public QualificationMetrics QualificationMetrics { get; }
+			= new QualificationMetrics();
+
 		public string BlogURL { get; set; }
 		public WebBrowser Browser { get; set; }
-		public List<string> Certifications { get; set; }
-		public string Employer { get; set; }
 		public int RegistrationFee { get; set; }
-		public List<Session> Sessions { get; set; }
+		public List<ConferenceSession> ProposedConferenceSessions { get; set; }
 
-		/// <summary>
-		/// Register a speaker
-		/// </summary>
-		/// <returns>speakerID</returns>
-		public RegisterResponse Register(IRepository repository)
+
+		public RegisterResponse TryRegister(IRepository repository)
 		{
-			// lets init some vars
-			int? speakerId = null;
-			bool good = false;
-			bool appr = false;
-			//var nt = new List<string> {"Node.js", "Docker"};
-			var ot = new List<string>() { "Cobol", "Punch Cards", "Commodore", "VBScript" };
-
-			//DEFECT #5274 DA 12/10/2012
-			//We weren't filtering out the prodigy domain so I added it.
-			var domains = new List<string>() { "aol.com", "prodigy.com", "compuserve.com" };
-
-			if (!string.IsNullOrWhiteSpace(FirstName))
+			try
 			{
-				if (!string.IsNullOrWhiteSpace(LastName))
-				{
-					if (!string.IsNullOrWhiteSpace(Email))
-					{
-						//put list of employers in array
-						var emps = new List<string>() { "Pluralsight", "Microsoft", "Google" };
-
-						good = Exp > 10 || HasBlog || Certifications.Count() > 3 || emps.Contains(Employer);
-
-						if (!good)
-						{
-							//need to get just the domain from the email
-							string emailDomain = Email.Split('@').Last();
-
-							if (!domains.Contains(emailDomain) && (!(Browser.Name == WebBrowser.BrowserName.InternetExplorer && Browser.MajorVersion < 9)))
-							{
-								good = true;
-							}
-						}
-
-						if (good)
-						{
-							if (Sessions.Count() != 0)
-							{
-								foreach (var session in Sessions)
-								{
-									//foreach (var tech in nt)
-									//{
-									//    if (session.Title.Contains(tech))
-									//    {
-									//        session.Approved = true;
-									//        break;
-									//    }
-									//}
-
-									foreach (var tech in ot)
-									{
-										if (session.Title.Contains(tech) || session.Description.Contains(tech))
-										{
-											session.Approved = false;
-											break;
-										}
-										else
-										{
-											session.Approved = true;
-											appr = true;
-										}
-									}
-								}
-							}
-							else
-							{
-								return new RegisterResponse(RegisterError.NoSessionsProvided);
-							}
-
-							if (appr)
-							{
-								//if we got this far, the speaker is approved
-								//let's go ahead and register him/her now.
-								//First, let's calculate the registration fee. 
-								//More experienced speakers pay a lower fee.
-								if (Exp <= 1)
-								{
-									RegistrationFee = 500;
-								}
-								else if (Exp >= 2 && Exp <= 3)
-								{
-									RegistrationFee = 250;
-								}
-								else if (Exp >= 4 && Exp <= 5)
-								{
-									RegistrationFee = 100;
-								}
-								else if (Exp >= 6 && Exp <= 9)
-								{
-									RegistrationFee = 50;
-								}
-								else
-								{
-									RegistrationFee = 0;
-								}
-
-
-								//Now, save the speaker and sessions to the db.
-								try
-								{
-									speakerId = repository.SaveSpeaker(this);
-								}
-								catch (Exception e)
-								{
-									//in case the db call fails 
-								}
-							}
-							else
-							{
-								return new RegisterResponse(RegisterError.NoSessionsApproved);
-							}
-						}
-						else
-						{
-							return new RegisterResponse(RegisterError.SpeakerDoesNotMeetStandards);
-						}
-					}
-					else
-					{
-						return new RegisterResponse(RegisterError.EmailRequired);
-					}
-				}
-				else
-				{
-					return new RegisterResponse(RegisterError.LastNameRequired);
-				}
+				return Register(repository);
 			}
-			else
+			catch (Exception ex)
 			{
-				return new RegisterResponse(RegisterError.FirstNameRequired);
+				Console.WriteLine(ex);
+				throw;
 			}
-
-			//if we got this far, the speaker is registered.
-			return new RegisterResponse((int)speakerId);
 		}
+
+		private RegisterResponse Register(IRepository repository)
+		{
+			var registerError = GetRegisterError();
+			if (registerError != null) 
+				return new RegisterResponse(registerError);
+
+            RegistrationFee = CalculateRegistrationFee();
+
+            var speakerId = repository.SaveSpeaker(this);
+			return new RegisterResponse(speakerId);
+		}
+
+		private RegisterError? GetRegisterError()
+		{
+			if (IsFirstNameEmpty) return RegisterError.FirstNameRequired;
+			if (IsLastNameEmpty) return RegisterError.LastNameRequired;
+			if (email.IsEmpty) return RegisterError.EmailRequired;
+			
+			if (!MeetsStandards()) 
+				return RegisterError.SpeakerDoesNotMeetStandards;
+
+			if (!ProposedConferenceSessions.Any())
+				return RegisterError.NoSessionsProvided;
+
+			if (!HasApprovedConferenceSession())
+				return RegisterError.NoSessionsApproved;
+
+			return null;
+		}
+
+        private bool MeetsStandards()
+			=> QualificationEvaluator.IsIdeal(QualificationMetrics)
+			   || (email.HasAcceptableDomain() && Browser.IsAcceptable);
+
+        private bool HasApprovedConferenceSession()
+			=> ProposedConferenceSessions
+				.Any(session => session.IsAboutNewTech);
+
+        private int CalculateRegistrationFee()
+        {
+            var yearCount = QualificationMetrics.ExperienceYearCount ?? 0;
+            
+            return RegistrationFeeDefaults.VariableFeeList
+                .First(fee => fee.IsQualifiedExperienceYearCount(yearCount))
+                .Amount;
+        }
 	}
+
 }

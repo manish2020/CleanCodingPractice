@@ -5,13 +5,16 @@
 		public BrowserName Name { get; set; }
 		public int MajorVersion { get; set; }
 
+		public bool IsAcceptable
+			=> !(Name == WebBrowser.BrowserName.InternetExplorer && MajorVersion < 9);
+
 		public WebBrowser(string name, int majorVersion)
 		{
 			Name = TranslateStringToBrowserName(name);
 			MajorVersion = majorVersion;
 		}
 
-		private BrowserName TranslateStringToBrowserName(string name)
+		private static BrowserName TranslateStringToBrowserName(string name)
 		{
 			if (name.Contains("IE")) return BrowserName.InternetExplorer;
 			//TODO: Add more logic for properly sniffing for other browsers.
@@ -31,5 +34,6 @@
 			Konqueror,
 			Linx
 		}
+
 	}
 }

@@ -1,13 +1,12 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
-using System;
 
 namespace CodeLuau.Tests
 {
 	[TestClass]
 	public class SpeakerTests
 	{
-		private FakeRepository repository = new FakeRepository();
+		private readonly FakeRepository repository = new FakeRepository();
 
 		[TestMethod]
 		public void Register_EmptyFirstName_ReturnsFirstNameRequired()
@@ -17,7 +16,7 @@ namespace CodeLuau.Tests
 			speaker.FirstName = "";
 
 			//act
-			var result = speaker.Register(repository);
+			var result = speaker.TryRegister(repository);
 
 			//assert
 			Assert.AreEqual(RegisterError.FirstNameRequired, result.Error);
@@ -31,7 +30,7 @@ namespace CodeLuau.Tests
 			speaker.LastName = "";
 
 			//act
-			var result = speaker.Register(repository);
+			var result = speaker.TryRegister(repository);
 
 			//assert
 			Assert.AreEqual(RegisterError.LastNameRequired, result.Error);
@@ -42,10 +41,10 @@ namespace CodeLuau.Tests
 		{
 			//arrange
 			var speaker = GetSpeakerThatWouldBeApproved();
-			speaker.Email = "";
+			speaker.EmailAddress = "";
 
 			//act
-			var result = speaker.Register(repository);
+			var result = speaker.TryRegister(repository);
 
 			//assert
 			Assert.AreEqual(RegisterError.EmailRequired, result.Error);
@@ -56,10 +55,10 @@ namespace CodeLuau.Tests
 		{
 			//arrange
 			var speaker = GetSpeakerWithRedFlags();
-			speaker.Employer = "Microsoft";
+			speaker.QualificationMetrics.Employer = "Microsoft";
 
 			//act
-			var result = speaker.Register(new FakeRepository());
+			var result = speaker.TryRegister(new FakeRepository());
 
 			//assert
 			Assert.IsNotNull(result.SpeakerId);
@@ -72,7 +71,7 @@ namespace CodeLuau.Tests
 			var speaker = GetSpeakerWithRedFlags();
 
 			//act
-			var result = speaker.Register(new FakeRepository());
+			var result = speaker.TryRegister(new FakeRepository());
 
 			//assert
 			Assert.IsNotNull(result.SpeakerId);
@@ -83,7 +82,7 @@ namespace CodeLuau.Tests
 		{
 			//arrange
 			var speaker = GetSpeakerWithRedFlags();
-			speaker.Certifications = new List<string>()
+			speaker.QualificationMetrics.Certifications = new List<string>()
 		{
 			"cert1",
 			"cert2",
@@ -92,7 +91,7 @@ namespace CodeLuau.Tests
 		};
 
 			//act
-			var result = speaker.Register(new FakeRepository());
+			var result = speaker.TryRegister(new FakeRepository());
 
 			//assert
 			Assert.IsNotNull(result.SpeakerId);
@@ -103,12 +102,12 @@ namespace CodeLuau.Tests
 		{
 			//arrange
 			var speaker = GetSpeakerThatWouldBeApproved();
-			speaker.Sessions = new List<Session>() {
-			new Session("Cobol for dummies", "Intro to Cobol")
+			speaker.ProposedConferenceSessions = new List<ConferenceSession>() {
+			new ConferenceSession("Cobol for dummies", "Intro to Cobol")
 		};
 
 			//act
-			var result = speaker.Register(repository);
+			var result = speaker.TryRegister(repository);
 
 			//assert
 			Assert.AreEqual(RegisterError.NoSessionsApproved, result.Error);
@@ -119,10 +118,10 @@ namespace CodeLuau.Tests
 		{
 			//arrange
 			var speaker = GetSpeakerThatWouldBeApproved();
-			speaker.Sessions = new List<Session>();
+			speaker.ProposedConferenceSessions = new List<ConferenceSession>();
 
 			//act
-			var result = speaker.Register(repository);
+			var result = speaker.TryRegister(repository);
 
 			//assert
 			Assert.AreEqual(RegisterError.NoSessionsProvided, result.Error);
@@ -133,11 +132,11 @@ namespace CodeLuau.Tests
 		{
 			//arrange
 			var speakerThatDoesntAppearExceptional = GetSpeakerThatWouldBeApproved();
-			speakerThatDoesntAppearExceptional.HasBlog = false;
+			speakerThatDoesntAppearExceptional.QualificationMetrics.HasBlog = false;
 			speakerThatDoesntAppearExceptional.Browser = new WebBrowser("IE", 6);
 
 			//act
-			var result = speakerThatDoesntAppearExceptional.Register(repository);
+			var result = speakerThatDoesntAppearExceptional.TryRegister(repository);
 
 			//assert
 			Assert.AreEqual(RegisterError.SpeakerDoesNotMeetStandards, result.Error);
@@ -148,11 +147,11 @@ namespace CodeLuau.Tests
 		{
 			//arrange
 			var speakerThatDoesntAppearExceptional = GetSpeakerThatWouldBeApproved();
-			speakerThatDoesntAppearExceptional.HasBlog = false;
-			speakerThatDoesntAppearExceptional.Email = "name@aol.com";
+			speakerThatDoesntAppearExceptional.QualificationMetrics.HasBlog = false;
+			speakerThatDoesntAppearExceptional.EmailAddress = "name@aol.com";
 
 			//act
-			var result = speakerThatDoesntAppearExceptional.Register(repository);
+			var result = speakerThatDoesntAppearExceptional.TryRegister(repository);
 
 			//assert
 			Assert.AreEqual(RegisterError.SpeakerDoesNotMeetStandards, result.Error);
@@ -161,27 +160,36 @@ namespace CodeLuau.Tests
 		#region Helpers
 		private Speaker GetSpeakerThatWouldBeApproved()
 		{
-			return new Speaker()
+
+			var result = new Speaker()
 			{
 				FirstName = "First",
 				LastName = "Last",
-				Email = "example@domain.com",
+				EmailAddress = "example@domain.com",
+				Browser = new WebBrowser("test", 1),
+				BlogURL = "",
+				ProposedConferenceSessions = new List<ConferenceSession>()
+				{
+					new ConferenceSession("test title", "test description")
+				}
+			};
+
+			var qualificationMetrics = new QualificationMetrics()
+			{
 				Employer = "Example Employer",
 				HasBlog = true,
-				Browser = new WebBrowser("test", 1),
-				Exp = 1,
+				ExperienceYearCount = 1,
 				Certifications = new System.Collections.Generic.List<string>(),
-				BlogURL = "",
-				Sessions = new System.Collections.Generic.List<Session>() {
-				new Session("test title", "test description")
-			}
 			};
+
+			result.QualificationMetrics.Copy(qualificationMetrics);
+			return result;
 		}
 
 		private Speaker GetSpeakerWithRedFlags()
 		{
 			var speaker = GetSpeakerThatWouldBeApproved();
-			speaker.Email = "tom@aol.com";
+			speaker.EmailAddress = "tom@aol.com";
 			speaker.Browser = new WebBrowser("IE", 6);
 			return speaker;
 		}
