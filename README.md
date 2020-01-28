@@ -1,4 +1,5 @@
-# Exercise: Cory House's (Pluralsight) Course on Clean Coding Principles in C#
+# Exercise on Clean Coding Principles in C#
+## From Pluralsight course by Cory House
 
 Refactored code from the course's exercise files. Re-wrote the project before watching the refactoring steps presented on the course. 
 
