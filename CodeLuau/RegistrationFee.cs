@@ -6,14 +6,14 @@ namespace CodeLuau
     internal class RegistrationFee
     {
         private string DebugDisplay
-            => $"Years: [{QualifiedExperienceYears.Minimum}, "
-               + $"{QualifiedExperienceYears.Maximum}], Amt: {Amount}";
+            => $"Years: [{QualifiedExperienceYearCount.Minimum}, "
+               + $"{QualifiedExperienceYearCount.Maximum}], Amt: {Amount}";
 
 
-        public IntRange QualifiedExperienceYears { get; set; }
+        public IntRange QualifiedExperienceYearCount { get; set; }
         public int Amount { get; set; }
 
-        public bool IsQualifiedExperienceYears(int year)
-            => QualifiedExperienceYears.ClosedIncludes(year);
+        public bool IsQualifiedExperienceYearCount(int year)
+            => QualifiedExperienceYearCount.ClosedIncludes(year);
     }
 }

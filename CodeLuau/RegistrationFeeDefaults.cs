@@ -7,28 +7,28 @@ namespace CodeLuau
         private static readonly RegistrationFee FeeFrom0To1
             = new RegistrationFee
             {
-                QualifiedExperienceYears = IntRange.MinToMax(0, 1),
+                QualifiedExperienceYearCount = IntRange.MinToMax(0, 1),
                 Amount = 500
             };
 
         private static readonly RegistrationFee FeeFrom2To3
             = new RegistrationFee
             {
-                QualifiedExperienceYears = IntRange.MinToMax(2, 3),
+                QualifiedExperienceYearCount = IntRange.MinToMax(2, 3),
                 Amount = 250
             };
 
         private static readonly RegistrationFee FeeFrom4To5
             = new RegistrationFee
             {
-                QualifiedExperienceYears = IntRange.MinToMax(4, 5),
+                QualifiedExperienceYearCount = IntRange.MinToMax(4, 5),
                 Amount = 100
             };
 
         private static readonly RegistrationFee FeeFrom6To9
             = new RegistrationFee
             {
-                QualifiedExperienceYears = IntRange.MinToMax(6, 9),
+                QualifiedExperienceYearCount = IntRange.MinToMax(6, 9),
                 Amount = 50
             };
 
@@ -36,7 +36,7 @@ namespace CodeLuau
         private static readonly RegistrationFee FeeFrom10
             = new RegistrationFee
             {
-                QualifiedExperienceYears = IntRange.MinToMax(10, HighestExperienceYears),
+                QualifiedExperienceYearCount = IntRange.MinToMax(10, HighestExperienceYears),
                 Amount = 250
             };
 

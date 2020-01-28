@@ -1,6 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
-using System;
 
 namespace CodeLuau.Tests
 {
@@ -56,7 +55,7 @@ namespace CodeLuau.Tests
 		{
 			//arrange
 			var speaker = GetSpeakerWithRedFlags();
-			speaker.Employer = "Microsoft";
+			speaker.QualificationMetrics.Employer = "Microsoft";
 
 			//act
 			var result = speaker.TryRegister(new FakeRepository());
@@ -83,7 +82,7 @@ namespace CodeLuau.Tests
 		{
 			//arrange
 			var speaker = GetSpeakerWithRedFlags();
-			speaker.Certifications = new List<string>()
+			speaker.QualificationMetrics.Certifications = new List<string>()
 		{
 			"cert1",
 			"cert2",
@@ -133,7 +132,7 @@ namespace CodeLuau.Tests
 		{
 			//arrange
 			var speakerThatDoesntAppearExceptional = GetSpeakerThatWouldBeApproved();
-			speakerThatDoesntAppearExceptional.HasBlog = false;
+			speakerThatDoesntAppearExceptional.QualificationMetrics.HasBlog = false;
 			speakerThatDoesntAppearExceptional.Browser = new WebBrowser("IE", 6);
 
 			//act
@@ -148,7 +147,7 @@ namespace CodeLuau.Tests
 		{
 			//arrange
 			var speakerThatDoesntAppearExceptional = GetSpeakerThatWouldBeApproved();
-			speakerThatDoesntAppearExceptional.HasBlog = false;
+			speakerThatDoesntAppearExceptional.QualificationMetrics.HasBlog = false;
 			speakerThatDoesntAppearExceptional.EmailAddress = "name@aol.com";
 
 			//act
@@ -161,21 +160,30 @@ namespace CodeLuau.Tests
 		#region Helpers
 		private Speaker GetSpeakerThatWouldBeApproved()
 		{
-			return new Speaker()
+
+			var result = new Speaker()
 			{
 				FirstName = "First",
 				LastName = "Last",
 				EmailAddress = "example@domain.com",
+				Browser = new WebBrowser("test", 1),
+				BlogURL = "",
+				ProposedConferenceSessions = new List<ConferenceSession>()
+				{
+					new ConferenceSession("test title", "test description")
+				}
+			};
+
+			var qualificationMetrics = new QualificationMetrics()
+			{
 				Employer = "Example Employer",
 				HasBlog = true,
-				Browser = new WebBrowser("test", 1),
 				ExperienceYearCount = 1,
 				Certifications = new System.Collections.Generic.List<string>(),
-				BlogURL = "",
-				ProposedConferenceSessions = new System.Collections.Generic.List<ConferenceSession>() {
-				new ConferenceSession("test title", "test description")
-			}
 			};
+
+			result.QualificationMetrics.Copy(qualificationMetrics);
+			return result;
 		}
 
 		private Speaker GetSpeakerWithRedFlags()

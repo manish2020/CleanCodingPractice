@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace CodeLuau
 {
-	public class Speaker : IIdealSpeakerMetrics
+	public class Speaker
 	{
 		public string FirstName { get; set; }
 		private bool IsFirstNameEmpty => string.IsNullOrWhiteSpace(FirstName);
@@ -19,11 +19,10 @@ namespace CodeLuau
 			set => email.Address = value;
 		}
 
-		public int? ExperienceYearCount { get; set; }
-		public bool HasBlog { get; set; }
-		public List<string> Certifications { get; set; }
+		public QualificationMetrics QualificationMetrics { get; }
+			= new QualificationMetrics();
+
 		public string BlogURL { get; set; }
-		public string Employer { get; set; }
 		public WebBrowser Browser { get; set; }
 		public int RegistrationFee { get; set; }
 		public List<ConferenceSession> ProposedConferenceSessions { get; set; }
@@ -48,12 +47,9 @@ namespace CodeLuau
 			if (registerError != null) 
 				return new RegisterResponse(registerError);
 
-			var valuedExp = ExperienceYearCount ?? 0;
-			RegistrationFee = RegistrationFeeDefaults.VariableFeeList
-				.First(fee => fee.IsQualifiedExperienceYears(valuedExp))
-				.Amount;
+            RegistrationFee = CalculateRegistrationFee();
 
-			var speakerId = repository.SaveSpeaker(this);
+            var speakerId = repository.SaveSpeaker(this);
 			return new RegisterResponse(speakerId);
 		}
 
@@ -65,22 +61,32 @@ namespace CodeLuau
 			
 			if (!MeetsStandards()) 
 				return RegisterError.SpeakerDoesNotMeetStandards;
-			
+
 			if (!ProposedConferenceSessions.Any())
 				return RegisterError.NoSessionsProvided;
-			
+
 			if (!HasApprovedConferenceSession())
 				return RegisterError.NoSessionsApproved;
 
 			return null;
 		}
 
-		private bool MeetsStandards()
-			=> SpeakerEvaluator.IsIdeal(this)
+        private bool MeetsStandards()
+			=> QualificationEvaluator.IsIdeal(QualificationMetrics)
 			   || (email.HasAcceptableDomain() && Browser.IsAcceptable);
 
-		private bool HasApprovedConferenceSession()
+        private bool HasApprovedConferenceSession()
 			=> ProposedConferenceSessions
 				.Any(session => session.IsAboutNewTech);
+
+        private int CalculateRegistrationFee()
+        {
+            var yearCount = QualificationMetrics.ExperienceYearCount ?? 0;
+            
+            return RegistrationFeeDefaults.VariableFeeList
+                .First(fee => fee.IsQualifiedExperienceYearCount(yearCount))
+                .Amount;
+        }
 	}
+
 }
