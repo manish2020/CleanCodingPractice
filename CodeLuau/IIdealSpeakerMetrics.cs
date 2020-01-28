@@ -2,7 +2,7 @@
 
 namespace CodeLuau
 {
-    internal interface IIdealSpeakerAspects
+    internal interface IIdealSpeakerMetrics
     {
         int? ExperienceYearCount { get; }
         bool HasBlog { get; }
